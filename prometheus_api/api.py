@@ -4,7 +4,6 @@ from urllib.parse import urljoin
 
 import requests
 
-
 class PrometheusAPI:
     def __init__(self, endpoint='http://127.0.0.1:9090/'):
         """
