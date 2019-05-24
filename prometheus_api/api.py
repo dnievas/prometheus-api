@@ -5,12 +5,15 @@ from urllib.parse import urljoin
 import requests
 
 class PrometheusAPI:
-    def __init__(self, endpoint='http://127.0.0.1:9090/'):
+    # TODO: enforce trailing slash for path?
+    def __init__(self, endpoint='http://127.0.0.1:9090/', username=None, password=None):
         """
 
         :param endpoint: address of
         """
         self.endpoint = endpoint
+        self.username = username
+        self.password = password
 
     def _to_timestamp(self, input, base=None):
         """
@@ -43,9 +46,20 @@ class PrometheusAPI:
 
     def query(self, query='prometheus_build_info'):
         return self._get(
-            uri='/api/v1/query',
+            uri='api/v1/query',
             params=dict(
                 query=query
+            )
+        )
+
+    def query_range(self, query, start, end, step): #TODO timeout
+        return self._get(
+            uri='api/v1/query_range',
+            params=dict(
+                query=query,
+                start=start,
+                end=end,
+                step=step
             )
         )
 
@@ -58,17 +72,20 @@ class PrometheusAPI:
             params['end'] = self._to_timestamp(end)
         if start:
             params['start'] = self._to_timestamp(start, base=end)
-        print(params)
         return self._get(
-            uri='/api/v1/series',
+            uri='api/v1/series',
             params= params
         )
 
     def _get(self, uri, params, method='GET'):
         url = urljoin(self.endpoint, uri)
         assert method == 'GET'
+        print(self.endpoint)
+        print(url)
+
         result = requests.get(
             url=url,
-            params=params
-        )
-        return result.json()
+            params=params, auth=(self.username, self.password), verify=False
+        ) #OK for auth to be None?
+        return result
+
