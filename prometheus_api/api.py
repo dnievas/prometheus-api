@@ -80,8 +80,6 @@ class PrometheusAPI:
     def _get(self, uri, params, method='GET'):
         url = urljoin(self.endpoint, uri)
         assert method == 'GET'
-        print(self.endpoint)
-        print(url)
 
         result = requests.get(
             url=url,
