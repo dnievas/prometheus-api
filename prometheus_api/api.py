@@ -85,5 +85,5 @@ class PrometheusAPI:
             url=url,
             params=params, auth=(self.username, self.password), verify=False
         ) #OK for auth to be None?
-        return result
+        return result.json()
 
