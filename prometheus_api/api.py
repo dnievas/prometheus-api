@@ -77,6 +77,21 @@ class PrometheusAPI:
             params= params
         )
 
+    def labels(self, match='prometheus_build_info', start=-86400, end='now'):
+        "Get labels"
+        params = {
+            'match[]': match
+        }
+        if end is not None:
+            params['end'] = self._to_timestamp(end)
+        if start:
+            params['start'] = self._to_timestamp(start, base=end)
+        return self._get(
+            uri='api/v1/labels',
+            params= params
+        )
+
+
     def _get(self, uri, params, method='GET'):
         url = urljoin(self.endpoint, uri)
         assert method == 'GET'
@@ -86,4 +101,3 @@ class PrometheusAPI:
             params=params, auth=(self.username, self.password), verify=False
         ) #OK for auth to be None?
         return result.json()
-
