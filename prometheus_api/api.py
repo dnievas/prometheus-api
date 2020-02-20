@@ -91,6 +91,20 @@ class PrometheusAPI:
             params= params
         )
 
+    def label_values(self, label='somelabel', start=-86400, end='now'):
+        "Get labels"
+        params = {
+            'label[]': label
+        }
+        if end is not None:
+            params['end'] = self._to_timestamp(end)
+        if start:
+            params['start'] = self._to_timestamp(start, base=end)
+        return self._get(
+            uri='api/v1/label/' + label + '/values',
+            params= params
+        )
+
 
     def _get(self, uri, params, method='GET'):
         url = urljoin(self.endpoint, uri)
